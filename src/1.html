@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script type="text/javascript" src="https://momentjs.com/downloads/moment.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lodash@4.17.11/lodash.min.js"></script>
+  <script type="text/javascript">
+    const messages = [
+      {id: "6", message_parts: [{body: "message_3", type: 'text'}], thread_id: null, timestamp: 1565766341},
+      {id: "1", message_parts: [{body: "message_1", type: 'text'}], thread_id: null, timestamp: 1565766241}, 
+      {id: "2", message_parts: [{body: "message_1_1", type: 'text'}], thread_id: 1, timestamp: ''}, 
+      {id: "3", message_parts: [{body: "message_1_2", type: 'text'}], thread_id: 1, timestamp: ''}, 
+      {id: "4", message_parts: [{body: "message_2", type: 'text'}], thread_id: null, timestamp: 1565666233}, 
+      {id: "5", message_parts: [{body: "message_2_1", type: 'text'}], thread_id: 4, timestamp: ''}, 
+    ];
+
+
+    function groupMessageByDate(messages) {
+      const messagesWithDate = _.groupBy(messages, (message) => moment.unix(message.timestamp).format("MMMM DD, YYYY"));
+      
+      return Object.keys(messagesWithDate).map((date) => {
+        const messages = messagesWithDate[date];
+        const maxDateMessage = _.maxBy(messages, (message) => message.timestamp);
+        return {
+          date: moment.unix(maxDateMessage.timestamp).format("MMMM DD, YYYY at hh:mm a"),
+          messages
+        }
+      });
+    }
+
+    function processHierarchyMessages(messages) {
+      const groupedMessages = {};
+
+      const parnetMessages = messages.filter(message => message.thread_id == null);
+      parnetMessages.forEach(parent_message => {
+        const { id } = parent_message;
+        const subThreads = messages.filter(message => message.thread_id == id);
+        groupedMessages[id] = {...parent_message, sub_threads: subThreads};
+      });
+
+      return Object.keys(groupedMessages).map(key => groupedMessages[key]);
+    }
+
+    const hierarchyMessages = processHierarchyMessages(messages);
+    
+    console.log(hierarchyMessages);
+
+    const groupedByDate = groupMessageByDate(hierarchyMessages);
+
+    console.log(groupedByDate);
+  </script>
+</head>
+<body>
+  
+</body>
+</html>
