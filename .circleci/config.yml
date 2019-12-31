@@ -61,10 +61,8 @@ jobs:
           name: Install netlify-cli
           command: sudo npm install -g --silent netlify-cli
       - run:
-          name: Deploy to Staging Netlify
-          command: |
-            ls -a ./public
-            netlify deploy --dir=./build
+          name: Deploy to Staging
+          command: netlify deploy --dir=./build
 
   deploy-prod:
     executor: node
@@ -78,7 +76,7 @@ jobs:
           name: Install netlify-cli
           command: sudo npm install -g --silent netlify-cli
       - run: 
-          name: Deploy to Netlify
+          name: Deploy to Production
           command: netlify deploy --dir=./build --prod
 
 workflows:
