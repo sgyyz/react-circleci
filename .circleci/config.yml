@@ -62,7 +62,9 @@ jobs:
           command: sudo npm install -g --silent netlify-cli
       - run:
           name: Deploy to Staging Netlify
-          command: netlify deploy --dir=./public
+          command: |
+            ls -a ./public
+            netlify deploy --dir=./public
 
   deploy-prod:
     executor: node
