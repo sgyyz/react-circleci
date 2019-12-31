@@ -1,3 +1,5 @@
+version: 2.1
+
 executors:
   node:
     docker:
@@ -21,8 +23,6 @@ aliases:
       key: yarn-cache-netlify-{{ checksum "yarn.lock" }}
       paths:
         - ./node_modules
-
-version: 2.1
 
 jobs:
   test:
@@ -49,8 +49,22 @@ jobs:
           root: ./
           paths:
             - public
+  deploy-staging:
+    executor: node
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ./
+      - <<: *restore_cache
+      - <<: *install_node_modules
+      - run: 
+          name: Install netlify-cli
+          command: sudo npm install -g --silent netlify-cli
+      - run:
+          name: Deploy to Staging Netlify
+          command: netlify deploy --dir=./public
 
-  deploy:
+  deploy-prod:
     executor: node
     steps:
       - checkout
@@ -63,7 +77,7 @@ jobs:
           command: sudo npm install -g --silent netlify-cli
       - run: 
           name: Deploy to Netlify
-          command: netlify deploy
+          command: netlify deploy --dir=./public --prod
 
 workflows:
   version: 2
@@ -77,9 +91,19 @@ workflows:
       - build:
           requires:
             - test
-      - deploy:
+      - deploy-staging:
           requires:
             - build
           filters:
             branches:
-              only: master
+              only:
+                - /release.*/
+                - /hotfix.*/
+                - develop
+      - deploy-prod:
+          requires:
+            - build
+          filters:
+            branches:
+              only: 
+                - master
