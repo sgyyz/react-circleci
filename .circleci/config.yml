@@ -23,6 +23,10 @@ aliases:
       key: yarn-cache-netlify-{{ checksum "yarn.lock" }}
       paths:
         - ./node_modules
+  install_netlify: &install_netlify
+    run:
+      name: Install netlify-cli
+      command: sudo npm install -g --silent netlify-cli
 
 jobs:
   test:
@@ -57,9 +61,7 @@ jobs:
           at: ./
       - <<: *restore_cache
       - <<: *install_node_modules
-      - run: 
-          name: Install netlify-cli
-          command: sudo npm install -g --silent netlify-cli
+      - <<: *install_netlify
       - run:
           name: Deploy to Staging
           command: netlify deploy --dir=./build
@@ -72,9 +74,7 @@ jobs:
           at: ./
       - <<: *restore_cache
       - <<: *install_node_modules
-      - run:
-          name: Install netlify-cli
-          command: sudo npm install -g --silent netlify-cli
+      - <<: *install_netlify
       - run: 
           name: Deploy to Production
           command: netlify deploy --dir=./build --prod
