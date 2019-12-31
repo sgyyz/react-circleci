@@ -63,22 +63,15 @@ jobs:
           command: sudo npm install -g --silent netlify-cli
       - run: 
           name: Deploy to Netlify
-          command: netlify deploy --dir=./build -p
+          command: netlify deploy
 
 workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - test:
-          filters:
-            branches:
-              ignore:
-                - gh-pages
-      - build:
-          requires:
-            - test
       - deploy:
           requires:
+            - test
             - build
           filters:
             branches:
