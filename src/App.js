@@ -2,11 +2,7 @@ import React from 'react';
 import './App.css';
 
 function App() {
-  return (
-    <div className="App">
-      This is the staging build.
-    </div>
-  );
+  return <div className="App">Well, launching production now.</div>;
 }
 
 export default App;
