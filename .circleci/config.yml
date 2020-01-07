@@ -64,9 +64,7 @@ jobs:
       - <<: *install_netlify
       - run:
           name: Deploy to Staging
-          command: |
-            netlify link --id ${STAGING_SITE_ID}
-            netlify deploy --dir=./build --site=${STAGING_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
+          command: netlify deploy --dir=./build --site=${STAGING_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
 
   deploy-prod:
     executor: node
@@ -79,9 +77,7 @@ jobs:
       - <<: *install_netlify
       - run: 
           name: Deploy to Production
-          command: |
-            netlify link --id ${PROD_SITE_ID}
-            netlify deploy --dir=./build --site=${PROD_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
+          command: netlify deploy --dir=./build --site=${PROD_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
 
 workflows:
   version: 2
