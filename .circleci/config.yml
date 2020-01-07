@@ -53,32 +53,6 @@ jobs:
           root: .
           paths: .
 
-  deploy-staging:
-    executor: node
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ./
-      - <<: *restore_cache
-      - <<: *install_node_modules
-      - <<: *install_netlify
-      - run:
-          name: Deploy to Staging
-          command: netlify deploy --dir=./build --site=${STAGING_SITE_ID} --prod
-
-  deploy-prod:
-    executor: node
-    steps:
-      - checkout
-      - attach_workspace:
-          at: ./
-      - <<: *restore_cache
-      - <<: *install_node_modules
-      - <<: *install_netlify
-      - run: 
-          name: Deploy to Production
-          command: netlify deploy --dir=./build --site=${PROD_SITE_ID} --prod
-
 workflows:
   version: 2
   build_and_deploy:
@@ -91,19 +65,3 @@ workflows:
       - build:
           requires:
             - test
-      - deploy-staging:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - /release.*/
-                - /hotfix.*/
-                - develop
-      - deploy-prod:
-          requires:
-            - build
-          filters:
-            branches:
-              only: 
-                - master
