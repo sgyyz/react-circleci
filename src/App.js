@@ -6,7 +6,10 @@ function App() {
     <div className="App">
       Well, launching {process.env.REACT_APP_ENV} now.
       <br />
-      Call API through {process.env.REACT_APP_API_URL}
+      Call API through{' '}
+      <a href={process.env.REACT_APP_API_URL}>
+        {process.env.REACT_APP_API_URL}
+      </a>
     </div>
   );
 }
