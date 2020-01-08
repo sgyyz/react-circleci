@@ -40,50 +40,58 @@ jobs:
           name: Test
           command: yarn test
 
-  build:
+  build-staging:
     executor: node
     steps:
       - checkout
       - <<: *restore_cache
       - <<: *install_node_modules
+      - <<: *save_cache
       - run:
           name: Build
-          command: yarn build
+          command: |
+            export REACT_APP_ENV=staging
+            export REACT_APP_API_KEY=http://staging.google.com
+            yarn build
       - persist_to_workspace:
           root: .
-          paths: .
+          paths: ./staging
+   
+   build-prod:
+    executor: node
+    steps:
+      - checkout
+      - <<: *restore_cache
+      - <<: *install_node_modules
+      - <<: *save_cache
+      - run:
+          name: Build
+          command: |
+            export REACT_APP_ENV=production
+            export REACT_APP_API_KEY=http://google.com
+      - persist_to_workspace:
+          root: .
+          paths: ./production
 
   deploy-staging:
     executor: node
     steps:
-      - checkout
       - attach_workspace:
-          at: ./
-      - <<: *restore_cache
-      - <<: *install_node_modules
+          at: ./staging
       - <<: *install_netlify
       - run:
           name: Deploy to Staging
-          command: |
-            export REACT_APP_ENV=staging
-            export REACT_APP_API_URL=http://staging.google.com
-            netlify deploy --dir=./build --site=${STAGING_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
+          command: netlify deploy --dir=./build --site=${STAGING_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
 
   deploy-prod:
     executor: node
     steps:
-      - checkout
       - attach_workspace:
-          at: ./
-      - <<: *restore_cache
-      - <<: *install_node_modules
+          at: ./production
       - <<: *install_netlify
       - run: 
           name: Deploy to Production
-          command: |
-            export REACT_APP_ENV=production
-            export REACT_APP_API_URL=http://google.com
-            netlify deploy --dir=./build --site=${PROD_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
+          command: netlify deploy --dir=./build --site=${PROD_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
 
 workflows:
   version: 2
@@ -94,12 +102,15 @@ workflows:
             branches:
               ignore:
                 - gh-pages
-      - build:
+      - build-staging:
+          requires:
+            - test
+      - build-prod:
           requires:
             - test
       - deploy-staging:
           requires:
-            - build
+            - build-staging
           filters:
             branches:
               only:
@@ -108,7 +119,7 @@ workflows:
                 - develop
       - deploy-prod:
           requires:
-            - build
+            - build-prod
           filters:
             branches:
               only: 
