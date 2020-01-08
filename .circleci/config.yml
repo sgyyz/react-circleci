@@ -51,7 +51,7 @@ jobs:
           name: Build
           command: |
             export REACT_APP_ENV=staging
-            export REACT_APP_API_KEY=http://staging.google.com
+            export REACT_APP_API_URL=${STAGING_API_URL}
             yarn build
       - persist_to_workspace:
           root: .
@@ -68,7 +68,7 @@ jobs:
           name: Build
           command: |
             export REACT_APP_ENV=production
-            export REACT_APP_API_KEY=http://google.com
+            export REACT_APP_API_URL=${PROD_API_URL}
             yarn build
       - persist_to_workspace:
           root: .
