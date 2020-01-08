@@ -55,7 +55,7 @@ jobs:
             yarn build
       - persist_to_workspace:
           root: .
-          paths: ./staging
+          paths: .
    
   build-prod:
     executor: node
@@ -72,13 +72,13 @@ jobs:
             yarn build
       - persist_to_workspace:
           root: .
-          paths: ./production
+          paths: production
 
   deploy-staging:
     executor: node
     steps:
       - attach_workspace:
-          at: ./staging
+          at: ./
       - <<: *install_netlify
       - run:
           name: Deploy to Staging
@@ -88,7 +88,7 @@ jobs:
     executor: node
     steps:
       - attach_workspace:
-          at: ./production
+          at: ./
       - <<: *install_netlify
       - run: 
           name: Deploy to Production
@@ -106,9 +106,12 @@ workflows:
       - build-staging:
           requires:
             - test
-      - build-prod:
-          requires:
-            - test
+          filters:
+            branches:
+              only:
+                - /release.*/
+                - /hotfix.*/
+                - develop
       - deploy-staging:
           requires:
             - build-staging
@@ -118,6 +121,13 @@ workflows:
                 - /release.*/
                 - /hotfix.*/
                 - develop
+      - build-prod:
+          requires:
+            - test
+          filters:
+            branches:
+              only: 
+                - master
       - deploy-prod:
           requires:
             - build-prod
