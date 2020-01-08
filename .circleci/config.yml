@@ -72,7 +72,7 @@ jobs:
             yarn build
       - persist_to_workspace:
           root: .
-          paths: production
+          paths: .
 
   deploy-staging:
     executor: node
