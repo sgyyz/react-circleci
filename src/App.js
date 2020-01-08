@@ -4,9 +4,9 @@ import './App.css';
 function App() {
   return (
     <div className="App">
-      Well, launching {process.env.REACT_APP_ENV} soon.
+      Well, launching {process.env.REACT_APP_ENV} lol.
       <br />
-      Call API through{' '}
+      Call API through:
       <a href={process.env.REACT_APP_API_URL}>
         {process.env.REACT_APP_API_URL}
       </a>
