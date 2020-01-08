@@ -57,7 +57,7 @@ jobs:
           root: .
           paths: ./staging
    
-   build-prod:
+  build-prod:
     executor: node
     steps:
       - checkout
@@ -69,6 +69,7 @@ jobs:
           command: |
             export REACT_APP_ENV=production
             export REACT_APP_API_KEY=http://google.com
+            yarn build
       - persist_to_workspace:
           root: .
           paths: ./production
