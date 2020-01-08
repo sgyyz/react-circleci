@@ -78,7 +78,7 @@ jobs:
           name: Deploy to Production
           command: |
             export COMMIT_MESSAGE=\"\"
-            netlify deploy --dir=./build --site=${PROD_SITE_ID} --prod --message "${CIRCLE_USERNAME}:$(git log --format=oneline -n 1 $CIRCLE_SHA1):${CIRCLE_BRANCH}"
+            netlify deploy --dir=./build --site=${PROD_SITE_ID} --prod --message "${CIRCLE_USERNAME} - $(git log --format=oneline -n 1) [${CIRCLE_BRANCH}]"
 
 workflows:
   version: 2
