@@ -65,7 +65,8 @@ jobs:
       - run:
           name: Deploy to Staging
           command: |
-            netlify link --id ${STAGING_SITE_ID}
+            export REACT_APP_ENV=staging
+            export REACT_APP_API_URL=http://staging.google.com
             netlify deploy --dir=./build --site=${STAGING_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
 
   deploy-prod:
@@ -80,7 +81,8 @@ jobs:
       - run: 
           name: Deploy to Production
           command: |
-            netlify link --id ${PROD_SITE_ID}
+            export REACT_APP_ENV=production
+            export REACT_APP_API_URL=http://google.com
             netlify deploy --dir=./build --site=${PROD_SITE_ID} --prod --message "${CIRCLE_USERNAME}:${CIRCLE_SHA1}"
 
 workflows:
